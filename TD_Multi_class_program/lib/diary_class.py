@@ -16,7 +16,6 @@ class Diary:
             word_count += entry.count_words()
         return word_count
         
-
     def reading_time(self, wpm):
         return round(self.count_words() / wpm)
 
