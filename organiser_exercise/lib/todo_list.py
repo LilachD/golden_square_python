@@ -1,5 +1,3 @@
-from lib.todo_class import *
-
 class TodoList:
     def __init__(self):
         self.task_list = []
