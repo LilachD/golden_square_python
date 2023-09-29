@@ -2,6 +2,7 @@ from lib.dish import *
 from lib.menu import *
 from lib.food_order import *
 from lib.order_summary import *
+from lib.text_confirmation import *
 
 """
 When adding a dish to a menu
@@ -25,23 +26,21 @@ def test_show_all_lists_dishes_with_prices():
     fattoush.set_price(9)
     menu.add(moussaka)
     menu.add(fattoush)
-    assert menu.all_dishes() == {"Moussaka": 12.5, "Fattoush Salad": 9.0}
+    assert menu.show_all() == "Moussaka  £12.5\nFattoush Salad  £9.0"
 
 """
-When adding a dish from a menu to a food order
-the dish is added to an order list
+When adding a dish that isn't in menu 
+food_order.add() returns error message
 """
-def test_add_dish_to_food_order():
+def test_add_unavailable_dish_to_food_order_returns_error():
     menu = Menu()
     moussaka = Dish("Moussaka")
     fattoush = Dish("Fattoush Salad")
     moussaka.set_price(12.5)
     fattoush.set_price(9.0)
     menu.add(moussaka)
-    menu.add(fattoush)
     order = FoodOrder(menu)
-    order.add("Moussaka")
-    assert order._basket == {"Moussaka": 12.5}
+    assert order.add(fattoush) == "Fattoush Salad is not available to order at the moment"
 
 
 """
@@ -57,10 +56,10 @@ def test_remove_dish_from_food_order():
     menu.add(moussaka)
     menu.add(fattoush)
     order = FoodOrder(menu)
-    order.add("Moussaka")
-    order.add("Fattoush")
-    order.remove("Moussaka")
-    assert order._basket == {"Fattoush": 9.0}
+    order.add(moussaka)
+    order.add(fattoush)
+    order.remove(moussaka)
+    assert order._basket == [fattoush]
 
 """
 When instantiating OrderSummary with a food order,
@@ -78,9 +77,9 @@ def test_order_summary_sum_up_adds_up_all_prices():
     menu.add(fattoush)
     menu.add(malabi)
     order = FoodOrder(menu)
-    order.add("Moussaka")
-    order.add("Fattoush")
-    order.add("Malabi")
+    order.add(moussaka)
+    order.add(fattoush)
+    order.add(malabi)
     order_summary = OrderSummary(order)
     assert order_summary.sum_up() == 28.0
 
@@ -98,29 +97,8 @@ def test_order_summary_view_returns_itemised_list_with_total():
     menu.add(moussaka)
     menu.add(fattoush)
     order = FoodOrder(menu)
-    order.add("Moussaka")
-    order.add("Fattoush")
+    order.add(moussaka)
+    order.add(fattoush)
     order_summary = OrderSummary(order)
-    assert order_summary.view() == ([("Moussaka", 12.5), ("Fattoush", 9.0)], ("Total", 21.5))
+    assert order_summary.view() == "Moussaka  £12.5\nFattoush  £9.0\n Total: £21.5"
 
-"""
-When viewing a summary where there's two of the same item
-that item appears twice with its original price
-e.g Salad price is 5,  
-{salad: 10} means two salads have been added to order
-in summary we should see [(salad, 5), (salad, 5)]
-"""
-def test_view_lists_identical_items_seperately():
-    menu = Menu()
-    moussaka = Dish("Moussaka")
-    hummus = Dish("Hummus")
-    moussaka.set_price(12.5)
-    hummus.set_price(5.0)
-    menu.add(moussaka)
-    menu.add(hummus)
-    order = FoodOrder(menu)
-    order.add("Moussaka")
-    order.add("Moussaka")
-    order.add("Hummus")
-    order_summary = OrderSummary(order)
-    assert order_summary.view() == ([("Moussaka", 12.5), ("Moussaka", 12.5), ("Hummus", 5)], ("Total" ,30))

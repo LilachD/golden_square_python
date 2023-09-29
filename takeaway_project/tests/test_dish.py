@@ -27,3 +27,8 @@ def test_set_price_as_float():
     dish = Dish("name")
     dish.set_price(3)
     assert dish._price == 3.0
+
+def test_format_returns_string():
+    dish = Dish("Mallawach")
+    dish.set_price(7.5)
+    assert dish.format() == "Mallawach  £7.5"

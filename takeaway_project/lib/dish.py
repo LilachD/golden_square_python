@@ -9,3 +9,6 @@ class Dish():
 
     def set_price(self, price):
         self._price = float(price)
+
+    def format(self):
+        return f"{self._name}  £{self._price}"

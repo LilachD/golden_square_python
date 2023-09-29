@@ -7,21 +7,26 @@ sum_up returns the total price of all items in order
 """
 def test_order_summary_sum_up_adds_up_all_prices():
     order = Mock()
-    order._basket.values.return_value = [3.5, 4.0]
+    item1 = Mock()
+    item1._price = 3.0
+    item2 = Mock()
+    item2._price = 4.5
+    order.show_basket.return_value = [item1, item2]
     order_summary = OrderSummary(order)
     assert order_summary.sum_up() == 7.5
 
 """
-When viewing a summary where there's two of the same item
-that item appears twice with its original price
-e.g Salad price is 5,  
-{salad: 10} means two salads have been added to order
-in summary we should see [(salad, 5), (salad, 5)]
+calling view returns a list 
+of items and prices, and a grand total
 """
-# def test_view_lists_identical_items_seperately_mock():
-    # order = Mock()
-    # order._basket = {"Hummus": 11, "Chips": 12}
-    # order._menu = {"Hummus": 5.5, "Chips": 4}
-    # order._basket.keys.return_value = ["Hummus", "Chips"]
-    # order_summary = OrderSummary(order)
-    # assert order_summary.view() == ([("Hummus", 5.5), ("Hummus", 5.5), ("Chips", 4), ("Chips", 4), ("Chips", 4)], ("Total" ,23))
+def test_view_returns_itemised_list_with_total():
+    order = Mock()
+    item1 = Mock()
+    item1._price = 3.0
+    item1.format.return_value = "Olives  £3.0"
+    item2 = Mock()
+    item2._price = 4.5
+    item2.format.return_value = "Chips  £4.5"
+    order.show_basket.return_value = [item1, item2]
+    order_summary = OrderSummary(order)
+    assert order_summary.view() == "Olives  £3.0\nChips  £4.5\n Total: £7.5"

@@ -1,22 +1,20 @@
 class FoodOrder():
-
     def __init__(self, menu):
-        self._menu = menu.all_dishes()
-        self._basket = {}
+        self._menu = menu._all_dishes
+        self._basket = []
             # sets variable to check if order has been submitted
         pass 
 
-    def add(self, dish_name):
-        if dish_name in self._basket:
-            self._basket[dish_name] += self._menu[dish_name]
+    def add(self, dish):
+        if dish not in self._menu:
+            return f"{dish._name} is not available to order at the moment"
         else:
-            self._basket[dish_name] = self._menu[dish_name]
+            self._basket.append(dish)
 
-    def remove(self, dish_name):
-        if self._basket[dish_name] != self._menu[dish_name]:
-            self._basket[dish_name] -= self._menu[dish_name]
-        else:    
-            del self._basket[dish_name]
+    def remove(self, dish):
+        if dish in self._basket:
+            self._basket.remove(dish)
+                
     
     def show_basket(self):
         return self._basket
